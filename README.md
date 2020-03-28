@@ -91,6 +91,14 @@ These are the top 30 counties, sorted by number of reported cases, as of March 2
 30:    New Jersey         Ocean    15       484  30         1       1   58.88028   55.29969
 ```
 
+#### Exponential vs. Power Curve Fits
+
+This plot, for the top 9 highest case count U.S. counties, shows the exponential and power curve fits in red and blue, respectively.
+
+![Curve Fits](https://github.com/dalyea/coronavirus/blob/master/assets/images/exp-power-9.png "Curve Fits")
+
+
+#### Individual County Results
 These plots are produced from the R code.  Particular counties from around the U.S. are featured here.
 
 ![New York City, NY](https://github.com/dalyea/coronavirus/blob/master/assets/images/nyc_20200327.png "New York City, NY")
