@@ -40,6 +40,19 @@ The primary approach is as follows:
 * data mine for particular examples of counties that have high, low, or otherwise unusual virus growth patterns
 * watch results for the happy time that there is evidence that the spread of coronavirus is on the decline across the country
 
+Example)
+About determining a meaningful first date for each county, use Los Angeles as an example. Each county began reporting data at various stages of the nationwide outbreak, even when case counts were very small in the given county.  Los Angeles began reporting coronavirus numbers on January 26, 2020, and there are 62 reported counts in the NY Times data set.  The case counts are:
+
+```
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 7 11 13 14 14 19 20 28 32 40 53 69 94 144 190 231 292 351 421 536 662 799 1216 1465
+```
+
+By using the variance method described above, the leading 1s are removed until there is sufficient evidence of counts variance.  The resulting set of count data for Los Angeles is thus:
+
+```
+1 1 1 1 1 1 7 11 13 14 14 19 20 28 32 40 53 69 94 144 190 231 292 351 421 536 662 799 1216 1465
+```
+
 ## Results
 
 These are the top 30 counties, sorted by number of reported cases, as of March 27, 2020.  The RMSE columns show the error rates when building the indicated model using the full data set available for the indicated county, from first date as described above to most recent data reported.  It appears that most harder hit counties are better handled by power curve models; but overall, about half of counties are best handled by exponential models, and in many cases, the power curve model is only marginally better/different from the exponential model for the county.
