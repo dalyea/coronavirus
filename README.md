@@ -4,7 +4,7 @@ Coronavirus EDA and modeling for U.S. counties
 
 This project, written in R, explores the coronavirus spread rate in U.S. counties by way of exponential and power curve modeling.  The goal is to understand if the spread of the virus is increasing, leveling, or decreasing on a county by county basis, with the aim of identifying that happy time when coronavirus cases are on the decline.
 
-## Installation
+## How To Run
 
 This R code can be run in R, R Studio, R in Jupyter notebooks, or R in any incarnation.  It requires:
 
@@ -13,6 +13,32 @@ This R code can be run in R, R Studio, R in Jupyter notebooks, or R in any incar
 * rvest
 
 and features use of the nls function from the stats package for fitting non-linear models.
+
+## Data
+
+The underlying data for this project comes the the NY Times repo with daily U.S. county reported data. The primary columns are:
+
+* state
+* city
+* cases
+* deaths
+
+This data is culled from various state and county health departments and other online sources.  It is assumed that the data, to whatever degree it is accurate, is at least representative of the scope of the outbreak in individual counties.  Some county results were cross-referenced with Wiki pages and, while there were almost always some differences, the NY Times data was generally within +/-3% of what is expressed in Wiki tables.  Note that some counties, depending on government county agencies, do not report updated numbers on weekends.
+
+## Approach
+
+The primary approach is as follows:
+
+* define a rolling window duration (7 and 10 days were explored)
+* determine a meaningful first date for each county, from which point to model the coronavirus outbreak for that county
+  * method 1: build models over rolling time windows, look for the first model with a parameter which exceeds some threshold
+  * method 2: examine variance of reported cases over rolling time windows, look for the first date at which variance exceeds some threshold
+* with the reduced data per county, build various models to show the rate of outbreak in each county; the primary models explored are:
+  * exponential
+  * power curve
+* define "days to double" as a key metric with which to express the severity of the outbreak in each county
+* data mine for particular examples of counties that have high, low, or otherwise unusual virus growth patterns
+* watch results for the happy time that there is evidence that the spread of coronavirus is on the decline across the country
 
 ## Results
 
