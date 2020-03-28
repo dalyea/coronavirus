@@ -16,6 +16,8 @@ and features use of the nls function from the stats package for fitting non-line
 
 ## Data
 
+#### Source
+
 The underlying data for this project comes the the NY Times repo with daily U.S. county reported data. The primary columns are:
 
 * state
@@ -24,6 +26,10 @@ The underlying data for this project comes the the NY Times repo with daily U.S.
 * deaths
 
 This data is culled from various state and county health departments and other online sources.  It is assumed that the data, to whatever degree it is accurate, is at least representative of the scope of the outbreak in individual counties.  Some county results were cross-referenced with Wiki pages and, while there were almost always some differences, the NY Times data was generally within +/-3% of what is expressed in Wiki tables.  Note that some counties, depending on government county agencies, do not report updated numbers on weekends.
+
+#### Summary Counts
+
+There are 1,797 U.S. counties in the data. Some of these are not actually counties, but rather cities or regions.  In the analysis below, a qualifying criteria is used so as to examine only the hardest hit counties.  For March 27, 2020 results, as shown, only counties with 50+ total reported cases are analyzed, resulting in 216 counties being included.
 
 ## Approach
 
@@ -107,6 +113,42 @@ These plots are produced from the R code.  Particular counties from around the U
 ![Orleans, LA](https://github.com/dalyea/coronavirus/blob/master/assets/images/orleans_20200327.png "Orleans County, LA")
 ![Broward County, FL](https://github.com/dalyea/coronavirus/blob/master/assets/images/broward_20200327.png "Broward County, FL")
 
+#### Smallest Days To Double
+
+With the modeling complete, and all 216 counties with 50+ cases available for scanning, these are the U.S. counties with the fastest growth of coronavirus as of March 27, 2020.
+
+```
+                          key ndays max_cases idx days_base days_sd rmse_power   rmse_exp county_idx dpts   d2mean
+1                 Lucas, Ohio    13        50 215         1       3   4.252220   4.112820        213    3 1.464179
+2      Unknown, Massachusetts    12       304  48         1       1  47.193476  56.853009         48    3 1.519749
+3    St. Louis city, Missouri    10        72 166         1       1  22.991099  24.412736        165    3 1.548381
+4         Unknown, New Jersey    16      1984   6         3       4 108.906625 215.550346          6    3 1.585691
+5      Hampden, Massachusetts    13        90 141         1       1   9.677155   8.181745        140    3 1.617174
+6            Caddo, Louisiana    17       140  94         1       3  26.140261  28.416646         94    3 1.627916
+7     Plymouth, Massachusetts    13       187  72         1       1  15.497281  18.509714         72    3 1.657390
+8      Bristol, Massachusetts    14       129  99         1       1  16.514192  14.038557         98    3 1.700668
+9    Worcester, Massachusetts    20       219  63         2       3  25.311933  25.312194         63    3 1.751038
+10      Luzerne, Pennsylvania    13        55 203         1       2   5.114946   5.314142        201    3 1.753808
+11       Ascension, Louisiana    12        91 136         1       1  20.672922  26.879528        135    3 1.784522
+12          Genesee, Michigan     9        91 137         1       1   5.666465   9.036913        136    3 1.795944
+13         Sussex, New Jersey     9        65 182         1       1   9.469912   6.848864        181    3 1.797791
+14                 Ada, Idaho    15        76 160         3       3   8.655420   5.662683        159    3 1.812102
+15     New Haven, Connecticut    14       222  59         1       1  31.283562  28.341056         59    3 1.829995
+16       Essex, Massachusetts    18       350  41         1       1  22.159388  12.617680         41    3 1.871749
+17           Unknown, Georgia     8       217  65         1       1  38.941596  53.552438         65    2 1.882061
+18            Marion, Indiana    22       484  29         3       5  47.306560  37.960415         29    3 1.906910
+19        St. Louis, Missouri    21       247  50         4       7  29.039943  27.217937         50    3 1.915348
+20 Philadelphia, Pennsylvania    18       530  27         1       1  37.597845  30.104411         27    3 1.928690
+21              Pima, Arizona    19       102 121         1       6  10.733604   7.449078        120    3 1.980861
+22             Kane, Illinois    18        77 159         5       6  10.322602   6.448199        158    3 2.003884
+23       Lehigh, Pennsylvania    13        93 131         1       1  13.829940  11.516726        130    3 2.015892
+24 Charleston, South Carolina    22        92 133         6       9  11.608309  12.317169        132    3 2.032903
+25             Will, Illinois    12       104 118         1       1  21.379591  14.685700        117    3 2.050222
+```
+
+This result set is sorted on the mean doubling days estimate of the final 3 model builds, using 7-day rolling periods, for each county, as defined as d2mean above.  Reference the max_cases column to hone in on particular counties with already high case counts.  Here are plots for Worcester, MA, the 9th fastest rate county as indicated above.
+
+![Worcester County, MA](https://github.com/dalyea/coronavirus/blob/master/assets/images/worcester_20200327.png "Worcester County, MA")
 
 ## Contributing
 Pull requests are welcome, as are suggestions on how to improve modeling or results presentation.
