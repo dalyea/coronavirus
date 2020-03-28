@@ -52,7 +52,7 @@ These are the top 30 counties, sorted by number of reported cases, as of March 2
 30:    New Jersey         Ocean    15       484  30         1       1   58.88028   55.29969
 ```
 
-![San Mateo County, CA](http://github.com/picture "San Mateo County, CA")
+![San Mateo County, CA](https://github.com/dalyea/coronavirus/blob/master/assets/san_mateo_20200327.png "San Mateo County, CA")
 
 
 ## Contributing
