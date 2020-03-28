@@ -41,7 +41,7 @@ The primary approach is as follows:
 * watch results for the happy time that there is evidence that the spread of coronavirus is on the decline across the country
 
 Example)
-About determining a meaningful first date for each county, use Los Angeles as an example. Each county began reporting data at various stages of the nationwide outbreak, even when case counts were very small in the given county.  Los Angeles began reporting coronavirus numbers on January 26, 2020, and there are 62 reported counts in the NY Times data set.  The case counts are:
+About determining a meaningful first date for each county, use Los Angeles as an example. Each county began reporting data at various stages of the nationwide outbreak, even when case counts were very small in many cases.  Los Angeles began reporting coronavirus numbers on January 26, 2020, and there are 62 reported counts in the NY Times data set.  The case counts are:
 
 ```
 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 7 11 13 14 14 19 20 28 32 40 53 69 94 144 190 231 292 351 421 536 662 799 1216 1465
