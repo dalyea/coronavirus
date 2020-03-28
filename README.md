@@ -1,6 +1,6 @@
 # Coronavirus Cases Modeling
 
-Coronavirus EDA and modeling for U.S. counties
+**Coronavirus EDA and modeling for U.S. counties**
 
 This project, written in R, explores the coronavirus spread rate in U.S. counties by way of exponential and power curve modeling.  The goal is to understand if the spread of the virus is increasing, leveling, or decreasing on a county by county basis, with the aim of identifying that happy time when coronavirus cases are on the decline.
 
@@ -88,7 +88,7 @@ These plots are produced from the R code.  Particular counties from around the U
 
 
 ## Contributing
-Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
+Pull requests are welcome, as are suggestions on how to improve modeling or results presentation.
 
 ## License
 License to explore and learn!
