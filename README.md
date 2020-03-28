@@ -18,7 +18,8 @@ and features use of the nls function from the stats package for fitting non-line
 
 These are the top 30 counties, sorted by number of reported cases, as of March 27, 2020.
 
-```            state        county ndays max_cases idx days_base days_sd rmse_power   rmse_exp
+```            
+            state        county ndays max_cases idx days_base days_sd rmse_power   rmse_exp
  1:      New York New York City    27     25399   1         1       1 4488.74421 6069.01071
  2:      New York   Westchester    24      7187   2         1       1  557.59128  824.30081
  3:      New York        Nassau    23      4657   3         1       1  839.81816 1158.80436
@@ -48,7 +49,8 @@ These are the top 30 counties, sorted by number of reported cases, as of March 2
 27:  Pennsylvania  Philadelphia    18       530  27         1       1   37.59784   30.10441
 28:    New Jersey         Union    19       519  28         1       2   62.44638   74.93800
 29:       Indiana        Marion    22       484  29         3       5   47.30656   37.96042
-30:    New Jersey         Ocean    15       484  30         1       1   58.88028   55.29969```
+30:    New Jersey         Ocean    15       484  30         1       1   58.88028   55.29969
+```
 
 ![San Mateo County, CA](http://github.com/picture "San Mateo County, CA")
 
