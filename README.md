@@ -42,7 +42,7 @@ The primary approach is as follows:
 
 ## Results
 
-These are the top 30 counties, sorted by number of reported cases, as of March 27, 2020.
+These are the top 30 counties, sorted by number of reported cases, as of March 27, 2020.  The RMSE columns show the error rates when building the indicated model using the full data set available for the indicated county, from first date as described above to most recent data reported.  It appears that most harder hit counties are better handled by power curve models; but overall, about half of counties are best handled by exponential models, and in many cases, the power curve model is only marginally better/different from the exponential model for the county.
 
 ```            
             state        county ndays max_cases idx days_base days_sd rmse_power   rmse_exp
@@ -78,7 +78,13 @@ These are the top 30 counties, sorted by number of reported cases, as of March 2
 30:    New Jersey         Ocean    15       484  30         1       1   58.88028   55.29969
 ```
 
-![San Mateo County, CA](https://github.com/dalyea/coronavirus/blob/master/assets/san_mateo_20200327.png "San Mateo County, CA")
+These plots are produced from the R code.  Particular counties from around the U.S. are featured here.
+
+![New York City, NY](https://github.com/dalyea/coronavirus/blob/master/assets/images/nyc_20200327.png "New York City, NY")
+![San Francisco County, CA](https://github.com/dalyea/coronavirus/blob/master/assets/images/san_francisco_20200327.png "San Francisco County, CA")
+![San Mateo County, CA](https://github.com/dalyea/coronavirus/blob/master/assets/images/san_mateo_20200327.png "San Mateo County, CA")
+![Orleans, LA](https://github.com/dalyea/coronavirus/blob/master/assets/images/orleans_20200327.png "Orleans County, LA")
+![Broward County, FL](https://github.com/dalyea/coronavirus/blob/master/assets/images/broward_20200327.png "Broward County, FL")
 
 
 ## Contributing
