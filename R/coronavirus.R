@@ -7,9 +7,9 @@
 #        plots, columns, etc. while proceeding through the code.
 
 # Libraries
-require('data.table')
-require('dplyr')
-require('rvest')
+library(data.table)
+library(dplyr)
+library(rvest)
 
 # Set your working directory here
 # setwd(...)
@@ -33,30 +33,31 @@ fwrite(ss, 'nytimes.csv', row.names=F)
 ss <- fread('nytimes.csv', stringsAsFactors=F)
 
 # Define deltas between days - use this to find anchor dates for each county
-ss[,cases_lag:=shift(.SD, type='lag', n=1), .SDcols='cases', by=.(county, state)]
+ss[,cases_lag:=data.table::shift(.SD, type='lag', n=1), .SDcols='cases', by=.(county, state)]
 ss[is.na(cases_lag),cases_lag:=0]
 ss[,new_cases:=cases-cases_lag]
 ss[,cases_lag:=NULL]
 
-# Take a look
-s1 <- ss %>% sample_n(1)
-ss[county==s1$county,]
-
 # Define key to make things easier
 ss[,key:=paste(county, state, sep=', ')]
 
+# Take a look
+s1 <- ss %>% sample_n(1)
+ss[key==s1$key,]
+
 # All counties with at least this many cases.
 # Create indexing idx for late use.
-min_cases <- 50
+min_cases <- 100
 s2 <- ss %>% group_by(key, state, county) %>% summarise(ndays=n(), max_cases=max(cases)) %>% 
   filter(max_cases>=min_cases) %>% arrange(-max_cases)
 s2 <- setDT(s2)
-s2[,idx:=1:.N]
+s2[,top_idx:=1:.N]
 dim(s2)
 # s2 <- ss[cases>=25,] %>% select(key, state, county) %>% unique()
 
 # This will make it easier to look up data later
-ss <- merge(ss, s2[,.(key, idx)], by='key', all.x=T)
+ss[,top_idx:=NULL]
+ss <- merge(ss, s2[,.(key, top_idx)], by='key', all.x=T)
 
 # Look at exponential and/or power models for this length periods
 per <- 7
@@ -66,22 +67,23 @@ per <- 7
 counties <- s2[ndays>=7,]
 counties <- setDT(counties)
 dim(counties)
+counties <- setDT(counties)
 
 # Example counties
 counties[key=='Fort Bend, Texas',]
 which(counties$key=='Fort Bend, Texas')
 
 # Re-index, since some indexing may have been dropped
-counties <- counties[order(idx),]
-counties[order(idx),county_idx:=1:.N]
-max(counties$idx)
+counties <- counties[order(top_idx),]
+counties[order(top_idx),county_idx:=1:.N]
+max(counties$top_idx)
 max(counties$county_idx)
 
 # Finding the first day at this exponentiation base
 base_min <- 1.2
 
 # Finding the first day at which variance on cases exceeds this number
-sd_min <- 2.0
+sd_min <- 3.0
 
 # Pause for viewing for each county
 sleeping <- 0.0
@@ -94,8 +96,12 @@ sd_res <- c()
 exp_list <- list()
 
 # Loop through counties
+# Note that some counties, like "Unknown" in Tennessee, Massachusetts and Colorado,
+# have cumulative data that is not in fact so.  These will be filtered out later
+# as needed.
+dim(counties)
 for (keyidx in 1:nrow(counties)) {
-  # for (keyidx in 1:20) {
+# for (keyidx in 1:5) {
   loc <- counties[keyidx,]
   data <- ss[key==loc$key,]
   cat(keyidx, loc$idx, loc$key, loc$max_cases, '\n')
@@ -118,28 +124,29 @@ for (keyidx in 1:nrow(counties)) {
         # expr={ sfit <- nls(cases ~ a*x^b, data=sdata, start=list(a=1.1, b=1.0)) }
         # Exponential model - this requires some hand tuning
         # expr={ sfit <- nls(cases ~ a*b^x, data=sdata, start=list(a=1.1, b=1.8)) }
-        expr={ sfit <- nls(cases ~ a*b^x, data=sdata, start=list(a=1.1, b=1.3), control=list(maxiter=500)) }
+        expr={ sfit <- nls(cases ~ a*b^x, data=sdata, start=list(a=1.1, b=1.3), control=list(maxiter=200)) }
         is_fit <- TRUE
       },
       error = function(e) {
-        cat('Did not fit 1.0', sidx, '\n')
+        cat('Did not fit 1.0', keyidx, sidx, '\n')
         tryCatch({
           # Powr model
           # sfit <- nls(cases ~ a*x^b, data=sdata, start=list(a=1.1, b=2.0))
           # Exponential model
           # sfit <- nls(cases ~ a*b^x, data=sdata, start=list(a=1.1, b=2.0))
-          sfit <- nls(cases ~ a*b^x, data=sdata, start=list(a=1.1, b=2.0), control=list(maxiter=500))
+          sfit <- nls(cases ~ a*b^x, data=sdata, start=list(a=1.1, b=2.0), control=list(maxiter=200))
           is_fit <- TRUE
         },
         error = function(e) {
-          cat('Did not fit 2.0', sidx, '\n')
+          cat('Did not fit 2.0',  keyidx, sidx, '\n')
           c_b <- 0
         })
       })
       if (is_fit==TRUE) {
         par(mar=c(4,3,3,3))
         par(mfrow=c(2,2))
-        plot(sdata$x, sdata$cases, type='b', ylim=c(0,1.2*max(sdata$cases)), xlab='', xaxt='n', main=max(sdata$dt))
+        plot(sdata$x, sdata$cases, type='b', ylim=c(0,1.2*max(sdata$cases)), xlab='', xaxt='n', 
+             main=loc$key) # main=max(sdata$dt))
         axis(1, at=1:nrow(sdata), labels=sdata$sdt, las=2, cex.axis=0.9)
         c_a <- coefficients(sfit)[1]
         c_b <- coefficients(sfit)[2]
@@ -153,10 +160,10 @@ for (keyidx in 1:nrow(counties)) {
     }
     powers <- c(powers, c_b)
   }
-  plot(data$cases, type='b', lwd=3)
-  plot(sds, lwd=2, col='blue', type='b')
+  plot(data$cases, type='b', lwd=3, main='Cases')
+  plot(sds, lwd=2, col='blue', type='b', main='SD')
   # plot(powers, type='b', main=loc$key)
-  plot(c(rep(0, per), powers), type='b', main=loc$key)
+  plot(c(rep(0, per), powers), type='b', main='Powers')
   p1 <- min(which(powers>base_min))
   cat('first_day power', p1, loc$key, '\n')
   base_res <- c(base_res, p1)
@@ -173,7 +180,7 @@ for (keyidx in 1:nrow(counties)) {
 
 # Keep track of start days per county, using either first acceptable base in exponential modeling
 # or variance on case counts
-starts <- data.frame(base=base_res, sd=sd_res)
+starts <- data.frame(top_idx=counties$top_idx, base=base_res, sd=sd_res)
 starts
 
 # Index for later
@@ -189,19 +196,19 @@ summary(starts$sd)
 # Look for cases where the case variance suggestion is less than the base suggestion
 # for first day to use
 which(starts$sd<starts$base)
-counties[194,]
-ss[key==counties[194,]$key,]
+counties[181,]
+ss[key==counties[181,]$key,]
 
 # Add starts data to counties object.  This assumes the counties data is in order,
 # but just to be sure, re-sort.
-counties <- counties[order(idx),]
+counties <- counties[order(top_idx),]
 counties[,days_base:=starts$base]
 counties[,days_sd:=starts$sd]
 
 # Reduce to just days needed for modeling
 # Using variance on cases first days
 # Define county index by date
-ss[order(key, dt),key_idx:=1:.N, by=.(key)]
+ss[order(key, dt), key_idx:=1:.N, by=.(key)]
 # ss[,county_idx:=NULL]
 # ss[,days_base:=NULL]
 # ss[,days_sd:=NULL]
@@ -226,7 +233,7 @@ length(unique(use$key))
 table(is.na(use$days_sd))
 
 # Look for missing counties, if interested
-unique(use$idx) %>% sort
+unique(use$top_idx) %>% sort
 unique(use$county_idx) %>% sort
 
 # Look at samples of counties, looking to see early days left out.
@@ -236,6 +243,8 @@ unique(use$county_idx) %>% sort
 s1 <- use %>% sample_n(1)
 ss[key==s1$key,] %>% head(10)
 use[key==s1$key,] %>% head(10)
+c(ss[key==s1$key,]$cases)
+c(use[key==s1$key,]$cases)
 
 # Create both power and exponential models for each county, using the new
 # data table 'use' restricted to chosen first days.  This is not on rolling 7 days,
@@ -245,15 +254,6 @@ counties$rmse_power <- 0.0
 counties$rmse_exp <- 0.0
 
 for (sidx in 1:nrow(counties)) {
-  # for (sidx in 3:3) {
-  # sidx <- 81
-  # data <- ss[idx==sidx,]
-  # starts[sidx,]
-  # data
-  # data <- data[starts[sidx,]$sd:nrow(data),]
-  # data$x <- 1:nrow(data)
-  # data
-  
   data <- use[county_idx==sidx,]
   data$x <- 1:nrow(data)
   data
@@ -277,30 +277,30 @@ for (sidx in 1:nrow(counties)) {
   data$bpred <- predict(bfit)
   rmse_s <- sqrt(sum((data$cases-data$spred)^2))
   rmse_b <- sqrt(sum((data$cases-data$bpred)^2))
-  cat(unique(data$key), rmse_s, rmse_b, '\n')
+  cat(sidx, unique(data$key), rmse_s, rmse_b, '\n')
   counties[sidx,]$rmse_power <- rmse_s
   counties[sidx,]$rmse_exp <- rmse_b
 }
 
-summary(starts$rmse_exp)
-summary(starts$rmse_power)
-which(starts$rmse_power<starts$rmse_exp)
+summary(counties$rmse_exp)
+summary(counties$rmse_power)
+which(counties$rmse_power<counties$rmse_exp)
 
 # Which model does best? 50/50
-table(starts$rmse_exp>starts$rmse_power)
-starts[1:20,]
+table(counties$rmse_exp>counties$rmse_power)
+counties[1:20,]
 
-# Look for big differences
-starts <- setDT(starts)
-starts$diff <- abs(starts$rmse_exp-starts$rmse_power)
-starts[,exp_better:=ifelse(rmse_exp<rmse_power, '*', '')]
-starts %>% arrange(-diff) %>% head(25)
+# Look for big differences between exponential and power curve
+counties <- setDT(counties)
+counties$diff <- abs(counties$rmse_exp-counties$rmse_power)
+counties[,exp_better:=ifelse(rmse_exp<rmse_power, '*', '')]
+counties %>% arrange(-diff) %>% head(25) %>% dplyr::select(-key)
 
 # Proceed with exponential
 # Make plots for specific counties
-counties[1:25,]
-sidx <- 25
-data <- ss[idx==sidx,]
+counties[1:20,] %>% dplyr::select(-key, -diff)
+sidx <- 154
+data <- ss[top_idx==sidx,]
 starts[sidx,]
 data
 data <- data[starts[sidx,]$sd:nrow(data),]
@@ -312,7 +312,10 @@ bases[bases>100] <- 100
 # Days to double
 d2 <- log(2)/log((bases/100)+1)
 length(bases)
+d2
 
+# 3-panel plot
+# Font size for mains
 cexm <- 1.5
 par(mfrow=c(3,1))
 par(mar=c(2,4.4,4,3))
@@ -321,7 +324,7 @@ par(mar=c(2,4.4,3,3))
 plot(1:(nrow(data)-6), bases, type='b', main='Exponentiation Model - Daily Growth', col='red', 
      xlim=c(1, nrow(data)), xlab='', ylab='% Daily Increase', lwd=2, cex.main=cexm)
 text(nrow(data)-3, 0.925*max(bases), adj=c(0,0), 'Rolling 7 Days')
-par(mar=c(6,4.4,3,3))
+par(mar=c(7,4.4,3,3))
 plot(1:(nrow(data)-6), d2, type='b', main='Days To Double Cases', col='green', 
      xlim=c(1, nrow(data)), xlab='', ylab='Days', lwd=2, xaxt='n', cex.main=cexm)
 axis(1, at=1:nrow(data), labels=data$dt, las=2, cex.axis=0.95)
@@ -335,4 +338,39 @@ lines(predict(bfit), col='red')
 coefficients(bfit)
 
 # For displaying summary results
-counties[1:30,] %>% select(-key, -county_idx)
+counties %>% arrange(rmse_exp) %>% head(30) %>% dplyr::select(-key, -county_idx)
+
+# Find counties with the lowest double days rate
+counties <- setDT(counties)
+counties <- counties[order(county_idx),]
+counties$dd_days <- 0
+counties$dd_mean <- 0.0
+
+# starts, counties, and exp_list are all in the original counties order.
+for (sidx in 1:nrow(counties)) {
+  bases <- 100*(exp_list[[sidx]]-1)
+  bases <- bases[starts[sidx,]$sd:length(bases)]
+  bases
+  bases[bases>100] <- 100
+  # Days to double
+  d2 <- log(2)/log((bases/100)+1)
+  idx1 <- (length(d2)-2)
+  if (idx1<1) idx1 <- 1
+  d2l <- d2[idx1:length(d2)]
+  cat(sidx, counties[sidx,]$county_idx, counties[sidx,]$key, d2l, '\n')
+  d2mean <- mean(d2l)
+  counties[sidx,]$dd_days <- length(d2l)
+  counties[sidx,]$dd_mean <- d2mean
+}
+
+# Top 25 counties by doubling rate in 7 days (per setting above)
+counties %>% arrange(dd_mean) %>% filter(dd_days>1 & dd_mean>-Inf) %>% head(25) %>% dplyr::select(-key, -diff, -county_idx)
+counties %>% arrange(dd_mean) %>% filter(dd_days>1 & dd_mean>0) %>% head(25) %>% dplyr::select(-key, -diff, -county_idx, -exp_better)
+
+# Top double days counties
+dd <- counties %>% arrange(dd_mean) %>% filter(dd_days>1 & dd_mean>0)
+dd <- setDT(dd)
+dd[,dd_rank:=1:.N]
+
+# Show California only
+dd[grepl('Calif', state),] %>% dplyr::select(-key, -diff, -county_idx, -exp_better) %>% arrange(-max_cases)
