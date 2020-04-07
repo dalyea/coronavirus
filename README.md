@@ -182,6 +182,28 @@ This is the updated ranking of lowest "days to double" counties in the U.S.  The
 25         Ohio             Hamilton    18       319     134         1       1    51.37931    29.79729       3 3.533340
 ```
 
+With a focus on California, here are all counties in California, ranked by max reported cases.  We see Kern, California in the nationwide top 25 list above.  There is San Bernardino at 44th and Riverside County at 45th.  The Bay Area counties include: #224 Santa Clara, #202 Alameda, #226 San Francisco, #181 San Mateo, and #175 Contra Costa.
+
+```
+> dd[grepl('Calif', state),] %>% dplyr::select(-key, -diff, -county_idx, -exp_better) %>% arrange(-max_cases)
+        state         county ndays max_cases top_idx days_base days_sd rmse_power   rmse_exp dd_days  dd_mean dd_rank
+1  California    Los Angeles    71      5940       8         4       1  628.86643  861.98343       3 4.748682     110
+2  California      San Diego    56      1326      37         1       1  111.69380 2524.35680       3 5.155150     135
+3  California    Santa Clara    66      1207      39         1       1  220.31183 3174.44381       3 9.279397     224
+4  California         Orange    72       834      54         5       5  170.73795  214.62125       3 6.636778     188
+5  California      Riverside    30       799      58         1       1   98.89302  119.76761       3 3.766711      45
+6  California        Alameda    36       587      85         1       1   81.05707  114.49029       3 7.422435     202
+7  California  San Francisco    64       571      86         7       8  125.99945 1704.06283       3 9.594789     226
+8  California      San Mateo    35       555      89         1       1   70.58010  105.51395       3 6.261341     181
+9  California     Sacramento    45       441     105         7       9   76.65726   79.37301       3 5.151038     134
+10 California   Contra Costa    34       386     117         2       2   44.17520   48.71289       3 6.053856     175
+11 California San Bernardino    22       372     120         1       1  102.18711  129.24305       3 3.758721      44
+12 California           Kern    20       225     183         1       1   35.23624   49.46248       3 3.379523      19
+13 California        Ventura    27       221     186         1       1   29.93453   59.29670       3 7.243104     199
+14 California    San Joaquin    27       203     190         3       1  422.04119   70.22567       3 9.493847     225
+15 California  Santa Barbara    22       174     209         3       1   23.18386   42.01744       3 5.184807     139
+```
+
 ![Worcester County, MA](https://github.com/dalyea/coronavirus/blob/master/assets/images/worcester_20200327.png "Worcester County, MA")
 
 ## Contributing
