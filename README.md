@@ -148,6 +148,40 @@ With the modeling complete, and all 216 counties with 50+ cases available for sc
 
 This result set is sorted on the mean doubling days estimate of the final 3 model builds, using 7-day rolling periods, for each county, as defined as d2mean above.  Reference the max_cases column to hone in on particular counties with already high case counts.  Here are plots for Worcester, MA, the 9th fastest rate county as indicated above.
 
+## UPDATE - April 6, 2020
+
+This is the updated ranking of lowest "days to double" counties in the U.S.  The search criteria is all counties with at least 125 reported cases, and there are 239 such counties.  As heard on the news, Louisiana continues to have a troubling high rate growth of the virus, and these results using my rolling 7-day approach bear that out.
+
+```
+> counties %>% arrange(dd_mean) %>% filter(dd_days>1 & dd_mean>0) %>% head(25) %>% dplyr::select(-key, -diff, -county_idx, -exp_better)
+          state               county ndays max_cases top_idx days_base days_sd  rmse_power    rmse_exp dd_days  dd_mean
+1     Louisiana           Tangipahoa    17       171     213         2       4    33.17305    28.94355       3 1.789918
+2     Louisiana          St. Charles    24       260     161         1       2    75.78980    81.63458       3 2.262140
+3  Pennsylvania              Luzerne    22       741      64         1       1    56.71236    94.45929       3 2.507387
+4     Louisiana St. John the Baptist    23       345     128         1       1   108.61882   117.84327       3 2.566686
+5     Louisiana          St. Bernard    22       242     170         1       1    65.79414    68.94668       3 2.630186
+6     Louisiana            Lafourche    23       228     182         1       1    48.82333    53.92159       3 2.742251
+7          Utah                 Utah    22       216     189         1       1    33.00541    26.46079       3 2.813998
+8  Pennsylvania               Lehigh    22       877      53         1       1    79.68897   117.41528       3 2.814531
+9      Michigan              Unknown    11       333     131         1       1    71.15213    83.41826       3 2.889491
+10     Virginia              Henrico    20       194     196         1       1    38.35392    27.20501       3 2.907859
+11    Louisiana             Ouachita    16       182     203         1       1    32.63072    29.23523       3 2.934307
+12 Pennsylvania            Lancaster    18       371     121         1       1    20.39336    42.36520       3 3.085354
+13    Louisiana            Jefferson    28      3088      20         1       1   557.26820   601.96552       3 3.134633
+14 Pennsylvania          Northampton    25       636      79         1       1    60.14093    96.34428       3 3.148129
+15     Oklahoma                Tulsa    31       240     173         3       4    32.23377    35.60558       3 3.210234
+16     Michigan              Genesee    18       504      98         1       1    73.61394   101.79699       3 3.222017
+17    Louisiana     East Baton Rouge    20       656      76         1       1   154.73610   122.24292       3 3.270267
+18      Georgia              Clayton    22       238     174         1       1    47.25252    52.42437       3 3.313920
+19   California                 Kern    20       225     183         1       1    35.23624    49.46248       3 3.379523
+20     New York        New York City    36     67552       1         1       1 12048.63958 20409.48064       3 3.404197
+21    Louisiana          St. Tammany    24       560      87         1       1    80.99786    94.84992       3 3.404683
+22     Virginia  Virginia Beach city    28       170     215         3       3   371.13423    22.96431       3 3.431367
+23      Indiana            Hendricks    29       177     206         1       2   423.43352    25.40822       3 3.476189
+24      Indiana                 Lake    20       335     130         1       1    33.12582    60.53714       3 3.517582
+25         Ohio             Hamilton    18       319     134         1       1    51.37931    29.79729       3 3.533340
+```
+
 ![Worcester County, MA](https://github.com/dalyea/coronavirus/blob/master/assets/images/worcester_20200327.png "Worcester County, MA")
 
 ## Contributing
