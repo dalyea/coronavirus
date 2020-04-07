@@ -148,6 +148,8 @@ With the modeling complete, and all 216 counties with 50+ cases available for sc
 
 This result set is sorted on the mean doubling days estimate of the final 3 model builds, using 7-day rolling periods, for each county, as defined as d2mean above.  Reference the max_cases column to hone in on particular counties with already high case counts.  Here are plots for Worcester, MA, the 9th fastest rate county as indicated above.
 
+![Worcester County, MA](https://github.com/dalyea/coronavirus/blob/master/assets/images/worcester_20200327.png "Worcester County, MA")
+
 ## UPDATE - April 6, 2020
 
 This is the updated ranking of lowest "days to double" counties in the U.S.  The search criteria is all counties with at least 125 reported cases, and there are 239 such counties.  As heard on the news, Louisiana continues to have a troubling high rate growth of the virus, and these results using my rolling 7-day approach bear that out.
@@ -204,7 +206,10 @@ With a focus on California, here are all counties in California, ranked by max r
 15 California  Santa Barbara    22       174     209         3       1   23.18386   42.01744       3 5.184807     139
 ```
 
-![Worcester County, MA](https://github.com/dalyea/coronavirus/blob/master/assets/images/worcester_20200327.png "Worcester County, MA")
+San Mateo's current outlook is shown here, having slightly worsened in the past 2 days.  This result, as with all results, are subject to the usual caveats around NY Times data rate of update, county reporting regularity, and the nature of reporting sometimes occurring in batches or not on weekends.
+
+![San Mateo County, CA](https://github.com/dalyea/coronavirus/blob/master/assets/images/san_mateo_20200406.png "San Mateo County, CA")
+
 
 ## Contributing
 Pull requests are welcome, as are suggestions on how to improve modeling or results presentation.
